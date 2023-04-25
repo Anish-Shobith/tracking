@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Document {
+  id             String    @id @default(uuid()) @map("_id")
+  name           String
+  type           String
+  submittedDate  DateTime
+  completionDate DateTime?
+  status         Status[] // A document can have multiple status entries
+}
+
+model Status {
+  id          String   @id @default(uuid()) @map("_id")
+  name        String // The name of the status (e.g. Submitted, In Progress, Completed, etc.)
+  description String? // A description of the status, providing more detail about its meaning and context
+  date        DateTime // The date and time when this status entry was created
+  document    Document @relation(fields: [documentId], references: [id])
+  documentId  String
+}
