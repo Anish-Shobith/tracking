@@ -44,7 +44,7 @@ router.get("/:id", async (req, res) => {
  * @param {string} status - status of document
  */
 router.post("/create", async (req, res) => {
-  const { name, type, submittedDate, completionDate, status } = req.body;
+  const { name, type, submittedDate, completionDate, description } = req.body;
   const date = new Date();
 
   try {
@@ -56,16 +56,15 @@ router.post("/create", async (req, res) => {
         completionDate,
         status: {
           create: {
-            name: status.name,
-            description: status.description,
+            name: "Submitted",
+            description: description,
             date,
           },
         },
       },
       include: { status: true },
     });
-
-    res.send(newDocument);
+    res.redirect(`http://localhost:3000/tracking#${name}`);
   } catch (error) {
     console.error(error);
     res
@@ -82,19 +81,21 @@ router.post("/create", async (req, res) => {
  * @param {string} status - status of document
  */
 router.post("/status", async (req, res) => {
-  const { id, status } = req.body;
-  const track = await prisma.document.update({
+  console.log(req.body);
+  const { id, status, description } = req.body;
+  await prisma.document.update({
     where: { id: String(id) },
     data: {
       status: {
         create: {
+          name: status,
+          description,
           date: new Date(),
-          ...status,
         },
       },
     },
   });
-  res.json(track);
+  res.redirect(`http://localhost:3000/tracking`);
 });
 
 /**
