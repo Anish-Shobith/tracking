@@ -26,5 +26,7 @@ Run:
 yarn dev
 ```
 
+API is live at : http://localhost:3001
+
 
 
